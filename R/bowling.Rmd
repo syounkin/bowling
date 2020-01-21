@@ -1,0 +1,90 @@
+# Bowling
+```{r libs, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width = 8}
+date()
+rm(list=ls())
+library("tidyverse")
+phi <- 1.6
+fig.width <- 8
+fig.height <- fig.width/phi
+```
+```{r  data, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE}
+bowling.df <- read.csv(file = "./data/bowling.csv",  colClasses =c("integer","Date","factor","factor","integer","integer","integer","integer","integer","integer"), header=TRUE,  na.strings = c("","NA"))
+
+#bowling.df <- subset(bowling.df, !is.na(Strikes))
+
+bowling.df <- bowling.df %>% mutate( Season = factor(ifelse(Date >= "2019-03-20" & Date < "2019-06-20", "Spring, 2019",
+                                                     ifelse(Date >= "2019-06-20" & Date < "2019-09-20", "Summer, 2019",
+                                                     ifelse(Date >= "2019-09-20" & Date < "2019-12-20", "Fall, 2019",
+                                                     ifelse(Date >= "2019-12-20" & Date < "2020-03-20", "Winter, 2020", NA)))), levels =  c("Spring, 2019","Summer, 2019","Fall, 2019","Winter, 2020")))
+
+
+```
+### Dates
+```{r dates, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+range(bowling.df$Date)
+```
+### Summary Statistics
+```{r strikePct, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+bowling.df %>% group_by(Bowler) %>% summarize(Games = length(Score), Average = mean(Score), Min = min(Score), Max = max(Score), StrikePct = sum(Strikes, na.rm = TRUE)/sum(StrikeOpps, na.rm = TRUE),SpareConversion = sum(Spares, na.rm = TRUE)/(sum(Spares, na.rm = TRUE)+sum(Opens, na.rm = TRUE)),SplitRate = sum(Splits, na.rm = TRUE)/sum(!is.na(Splits)))
+```
+### Lanes
+```{r table1, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+table(bowling.df$Lanes, useNA = "always")
+```
+### Sam's Scores
+#### Last Ten Games
+```{r table3, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+score <- bowling.df %>% filter(Bowler == "Sam") %>%  tail(10) %>% select(Score) %>% unlist(); summary(score)
+```
+#### Overall
+```{r table2, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+summary(subset(bowling.df,  Bowler == "Sam")$Score)
+```
+### Julie's Scores
+#### Last Ten Games
+```{r table5, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+score <- bowling.df %>% filter(Bowler == "Julie") %>%  tail(10) %>% select(Score) %>% unlist(); summary(score)
+```
+#### Overall
+```{r table6, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+summary(subset(bowling.df,  Bowler == "Julie")$Score)
+```
+### Distribution of Scores
+```{r fig1, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width = fig.width, fig.height = fig.height}
+bins  <- 20; ggplot(bowling.df, aes(x = Score)) + geom_histogram(aes(fill = Bowler), color = 1, bins = bins) + facet_grid( . ~  Bowler) + theme_bw()
+```
+### Score Cumulative Distribution Function
+```{r fig1b, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width = fig.width, fig.height = fig.height}
+ecdf.Sam <- with(subset(bowling.df, Bowler == "Sam"), ecdf(Score))
+ecdf.Julie <- with(subset(bowling.df, Bowler == "Julie"), ecdf(Score))
+
+n <- 50
+ecdf.df <- rbind(data.frame(q = q <- seq(100,250,length.out =  n), p = ecdf.Sam(q), Bowler = "Sam"),
+data.frame(q = q <- seq(100,250,length.out =  n), p = ecdf.Julie(q), Bowler = "Julie"))
+
+ecdf.df <- within(ecdf.df, {
+Bowler <- factor(Bowler, levels = c("Julie","Sam"), labels = c("Julie","Sam"))
+})
+
+ggplot(ecdf.df, aes(x = q, y = p)) + geom_line(aes(color = Bowler), size = 2) + scale_x_continuous(name = "Score") + scale_y_continuous(name = "Percent") + theme_bw()
+```
+### Scores by Season
+```{r fig2, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = fig.width, fig.height = fig.height}
+ggplot(bowling.df, aes(x = Bowler, y = Score)) + geom_boxplot(aes(fill = Bowler)) + facet_grid( . ~ Season ) + theme_bw()
+```
+### Scores by Lanes
+```{r fig3, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = fig.width, fig.height = fig.height}
+ggplot(bowling.df, aes(x = Bowler, y = Score)) + geom_boxplot(aes(fill = Bowler)) + facet_grid( . ~ Lanes ) + theme_bw()
+```
+### Scores by Date of Outing
+```{r fig4, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 1.5*fig.width, fig.height = 3*fig.height}
+ggplot(bowling.df, aes(x = as.factor(Date), y = Score)) + geom_boxplot(aes(fill = Bowler)) + facet_grid(Bowler ~ .) + scale_x_discrete(name = "Date") + theme_bw() + theme(axis.text.x = element_text(angle = 90))
+```
+### Score by Date of Outing
+```{r fig6, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 1.5*fig.width, fig.height = fig.height}
+bowling.df %>% ggplot(aes(x=Date,y=Score))  +  geom_smooth(aes(color = Bowler), size =  1.2) +  geom_point(aes(color = Bowler), size =  1.2) + theme_bw()
+```
+### Average by Date of Outing
+```{r fig5, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 1.5*fig.width, fig.height = fig.height}
+bowling.df %>% group_by(Bowler, Date)  %>% summarize(mean = mean(Score))  %>% ggplot(aes(x=Date,y=mean))  +  geom_smooth(aes(color = Bowler), size =  1.2) +  geom_point(aes(color = Bowler), size =  1.2) + theme_bw()
+```
