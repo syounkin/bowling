@@ -28,6 +28,7 @@ bowling.df %>% group_by(Bowler) %>% summarize(Games = length(Score), Average = m
 ### Sam's Scores
 #### Last Ten Games
 ```{r table3, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+bowling.df %>% filter(Bowler == "Sam") %>% tail(10) %>% select(Date, Bowler, Lanes, Score, Strikes, Spares, Opens, Splits)
 score <- bowling.df %>% filter(Bowler == "Sam") %>%  tail(10) %>% select(Score) %>% unlist(); summary(score)
 ```
 #### Overall
@@ -37,15 +38,12 @@ summary(subset(bowling.df,  Bowler == "Sam")$Score)
 ### Julie's Scores
 #### Last Ten Games
 ```{r table5, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
+bowling.df %>% filter(Bowler == "Julie") %>% tail(10) %>% select(Date, Bowler, Lanes, Score, Strikes, Spares, Opens, Splits)
 score <- bowling.df %>% filter(Bowler == "Julie") %>%  tail(10) %>% select(Score) %>% unlist(); summary(score)
 ```
 #### Overall
 ```{r table6, eval = TRUE, echo = FALSE, results = "show", warning = TRUE, error = TRUE, message = FALSE}
 summary(subset(bowling.df,  Bowler == "Julie")$Score)
-```
-### Scores by Season
-```{r fig2, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 2*fig.width, fig.height = fig.height}
-ggplot(bowling.df, aes(x = Bowler, y = Score)) + geom_boxplot(aes(fill = Bowler)) + facet_grid( . ~ Season ) + theme_bw()
 ```
 ### Score by Date of Outing
 ```{r fig6, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 1.25*fig.width, fig.height = phi*fig.height}
@@ -54,6 +52,10 @@ bowling.df %>% ggplot(aes(x=Date,y=Score))  +  geom_smooth(aes(color = Bowler), 
 ### Scores by Date of Outing
 ```{r fig4, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 4*fig.width, fig.height = 3*fig.height}
 ggplot(bowling.df, aes(x = as.factor(Date), y = Score)) + geom_boxplot(aes(fill = Bowler)) + facet_grid(Bowler ~ .) + scale_x_discrete(name = "Date") + theme_bw() + theme(axis.text.x = element_text(angle = 90))
+```
+### Scores by Season
+```{r fig2, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 2*fig.width, fig.height = fig.height}
+ggplot(bowling.df, aes(x = Bowler, y = Score)) + geom_boxplot(aes(fill = Bowler)) + facet_grid( . ~ Season ) + theme_bw()
 ```
 ### Scores by Lanes
 ```{r fig3, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 2*fig.width, fig.height = fig.height}
