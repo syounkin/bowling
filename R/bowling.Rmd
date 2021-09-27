@@ -46,8 +46,8 @@ score <- bowling.df %>% filter(Bowler == "Julie") %>%  tail(10) %>% select(Score
 summary(subset(bowling.df,  Bowler == "Julie")$Score)
 ```
 ### Score by Date of Outing
-```{r fig6, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 1.25*fig.width, fig.height = phi*fig.height}
-bowling.df %>% ggplot(aes(x=Date,y=Score))  +  geom_smooth(aes(color = Bowler), size =  1.5) +  geom_point(aes(color = Bowler), size =  1) +coord_cartesian(ylim = c(120, 180))  + theme_bw()
+```{r fig6, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 1.5*fig.width, fig.height = 1/phi*1.5*fig.width}
+bowling.df %>% ggplot(aes(x=Date,y=Score))  +  geom_smooth(aes(color = Bowler), size =  1.5) +  geom_point(aes(color = Bowler), size =  1) +coord_cartesian(ylim = c(120, 200))  + theme_bw()
 ```
 ### Scores by Date of Outing
 ```{r fig4, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE, fig.width  = 4*fig.width, fig.height = 3*fig.height}

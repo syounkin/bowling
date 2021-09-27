@@ -2,3 +2,4 @@ figure/
 *.md
 archive/
 .DS_Store
+data*

@@ -1,7 +1,7 @@
 bowling: ./R/bowling.Rmd
-	cp -v ~/Dropbox/bowling/bowling.csv ./data/
+	#cp -v ~/Dropbox/younkin/samuel/bowling/bowling.csv ./data/
 	R -e 'library("knitr"); opts_knit$$set(root.dir = "./"); knit2html("./R/bowling.Rmd","./html/bowling.html")'
-	cp -v ./html/bowling.html ~/Dropbox/bowling/
+	cp -v ./html/bowling.html ~/Dropbox/younkin/samuel/bowling/
 
 clean-script:
 #	mv -v README.md README.md.tmp
