@@ -8,7 +8,7 @@ fig.width <- 5
 fig.height <- fig.width/phi
 ```
 ```{r  data, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = FALSE}
-bowling.df <- read.csv(file = "./data/bowling.csv",  colClasses =c("integer","Date","factor","factor","integer","integer","integer","integer","integer","integer"), header=TRUE,  na.strings = c("","NA"))
+bowling.df <- read.csv(file = "./data/bowling.csv",  colClasses =c("Date","factor","factor","integer","integer","integer","integer","integer","integer"), header=TRUE,  na.strings = c("","NA"))
 
 #bowling.df <- subset(bowling.df, !is.na(Strikes))
 
